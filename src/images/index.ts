@@ -5,7 +5,7 @@ import dailyReward from "./daily-reward.png";
 import dailyCipher from "./daily-cipher.png";
 import dailyCombo from "./daily-combo.png";
 import mainCharacter from "./main-character.png";
-import hamsterCoin from "./hamster-coin.png";
+// import hamsterCoin from "./hamster-coin.png";
 
 export {
     hamsterExchange,
@@ -15,5 +15,5 @@ export {
     dailyCipher,
     dailyCombo,
     mainCharacter,
-    hamsterCoin
+    // hamsterCoin
 };

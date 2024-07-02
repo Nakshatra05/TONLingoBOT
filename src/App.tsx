@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import { binanceLogo, dailyCipher, dailyCombo, dailyReward, tonlingoCoin, hamsterCoin } from './images';
+import { binanceLogo, dailyCipher, dailyCombo, dailyReward, tonlingoCoin } from './images';
 import Info from './icons/Info';
 import Settings from './icons/Settings';
 import Mine from './icons/Mine';
@@ -248,7 +248,7 @@ const App: React.FC = () => {
           <p className="mt-1">Earn</p>
         </div>
         <div className="text-center text-[#85827d] w-1/5">
-          <img src={hamsterCoin} alt="Airdrop" className="w-8 h-8 mx-auto" />
+          <img src={tonlingoCoin} alt="Airdrop" className="w-8 h-8 mx-auto" />
           <p className="mt-1">Airdrop</p>
         </div>
       </div>
