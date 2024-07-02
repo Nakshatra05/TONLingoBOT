@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import Hamster from './icons/Hamster';
-import { binanceLogo, dailyCipher, dailyCombo, dailyReward, dollarCoin, hamsterCoin, mainCharacter } from './images';
+import { binanceLogo, dailyCipher, dailyCombo, dailyReward, tonlingoCoin, hamsterCoin } from './images';
 import Info from './icons/Info';
 import Settings from './icons/Settings';
 import Mine from './icons/Mine';
@@ -38,12 +37,31 @@ const App: React.FC = () => {
   const [levelIndex, setLevelIndex] = useState(6);
   const [points, setPoints] = useState(22749365);
   const [clicks, setClicks] = useState<{ id: number, x: number, y: number }[]>([]);
-  const pointsToAdd = 11;
+  const pointsToAdd = 100;
   const profitPerHour = 126420;
 
   const [dailyRewardTimeLeft, setDailyRewardTimeLeft] = useState("");
   const [dailyCipherTimeLeft, setDailyCipherTimeLeft] = useState("");
   const [dailyComboTimeLeft, setDailyComboTimeLeft] = useState("");
+
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
+
+  const questions = [
+    { question: "अर्थ 'संगीत' का क्या है?", correctAnswer: "A. Music", options: ["A. Music", "B. Dance", "C. Painting", "D. Drama"] },
+    { question: "अर्थ 'साहसी' का क्या है?", correctAnswer: "C. Courageous", options: ["A. Lazy", "B. Weak", "C. Courageous", "D. Cowardly"] },
+    { question: "अर्थ 'प्रकाश' का क्या है?", correctAnswer: "D. Light", options: ["A. Darkness", "B. Night", "C. Shadow", "D. Light"] },
+    { question: "अर्थ 'मित्र' का क्या है?", correctAnswer: "B. Friend", options: ["A. Enemy", "B. Friend", "C. Stranger", "D. Neighbor"] },
+    { question: "अर्थ 'कला' का क्या है?", correctAnswer: "C. Art", options: ["A. Science", "B. History", "C. Art", "D. Literature"] },
+    { question: "अर्थ 'आशावादी' का क्या है?", correctAnswer: "A. Optimistic", options: ["A. Optimistic", "B. Pessimistic", "C. Neutral", "D. Doubtful"] },
+    { question: "अर्थ 'संवाद' का क्या है?", correctAnswer: "B. Dialogue", options: ["A. Monologue", "B. Dialogue", "C. Lecture", "D. Speech"] },
+    { question: "अर्थ 'विचार' का क्या है?", correctAnswer: "D. Thought", options: ["A. Dream", "B. Idea", "C. Memory", "D. Thought"] },
+    { question: "अर्थ 'शांति' का क्या है?", correctAnswer: "A. Peace", options: ["A. Peace", "B. War", "C. Conflict", "D. Chaos"] },
+    { question: "अर्थ 'संपूर्ण' का क्या है?", correctAnswer: "B. Complete", options: ["A. Partial", "B. Complete", "C. Incomplete", "D. Fragmented"] },
+    { question: "अर्थ 'समर्पण' का क्या है?", correctAnswer: "C. Surrender", options: ["A. Fight", "B. Resist", "C. Surrender", "D. Attack"] }
+]; 
+
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
   const calculateTimeLeft = (targetHour: number) => {
     const now = new Date();
@@ -77,20 +95,6 @@ const App: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const card = e.currentTarget;
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-    card.style.transform = `perspective(1000px) rotateX(${-y / 10}deg) rotateY(${x / 10}deg)`;
-    setTimeout(() => {
-      card.style.transform = '';
-    }, 100);
-
-    setPoints(points + pointsToAdd);
-    setClicks([...clicks, { id: Date.now(), x: e.pageX, y: e.pageY }]);
-  };
-
   const handleAnimationEnd = (id: number) => {
     setClicks((prevClicks) => prevClicks.filter(click => click.id !== id));
   };
@@ -122,13 +126,24 @@ const App: React.FC = () => {
     return `+${profit}`;
   };
 
-  useEffect(() => {
-    const pointsPerSecond = Math.floor(profitPerHour / 3600);
-    const interval = setInterval(() => {
-      setPoints(prevPoints => prevPoints + pointsPerSecond);
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [profitPerHour]);
+  const handleAnswerClick = (answer: string) => {
+    setSelectedAnswer(answer);
+  
+    // Check if the selected answer is correct
+    if (answer === questions[currentQuestionIndex].correctAnswer) {
+      setMessage("Correct!");
+      setPoints(points + pointsToAdd);
+    } else {
+      setMessage("Wrong answer");
+    }
+  
+    // Delay before navigating to the next question (adjust as needed)
+    setTimeout(() => {
+      setSelectedAnswer(null);
+      setMessage(null);
+      setCurrentQuestionIndex((prevIndex) => (prevIndex + 1) % questions.length);
+    }, 300); // Adjust the delay (in milliseconds) for swifter navigation
+  };
 
   return (
     <div className="bg-black flex justify-center">
@@ -136,44 +151,33 @@ const App: React.FC = () => {
         <div className="px-4 z-10">
           <div className="flex items-center space-x-2 pt-4">
             <div className="p-1 rounded-lg bg-[#1d2025]">
-              <Hamster size={24} className="text-[#d4d4d4]" />
+              {/* Removed Hamster Icon */}
             </div>
             <div>
               <p className="text-sm"> Nakshatra (CEO)</p>
             </div>
           </div>
-          <div className="flex items-center justify-between space-x-4 mt-1">
-            <div className="flex items-center w-1/3">
-              <div className="w-full">
-                <div className="flex justify-between">
-                  <p className="text-sm">{levelNames[levelIndex]}</p>
-                  <p className="text-sm">{levelIndex + 1} <span className="text-[#95908a]">/ {levelNames.length}</span></p>
-                </div>
-                <div className="flex items-center mt-1 border-2 border-[#43433b] rounded-full">
-                  <div className="w-full h-2 bg-[#43433b]/[0.6] rounded-full">
-                    <div className="progress-gradient h-2 rounded-full" style={{ width: `${calculateProgress()}%` }}></div>
-                  </div>
-                </div>
+          <div className="flex items-center justify-between">
+            <div className="pt-1">
+              <p className="text-gray-400 text-xs">
+                Level {levelIndex + 1}: {levelNames[levelIndex]}
+              </p>
+              <div className="relative bg-gray-600 h-2 rounded-lg w-44">
+                <div className="absolute top-0 left-0 bg-[#ffbf00] h-2 rounded-lg" style={{ width: `${calculateProgress()}%` }}></div>
               </div>
             </div>
-            <div className="flex items-center w-2/3 border-2 border-[#43433b] rounded-full px-4 py-[2px] bg-[#43433b]/[0.6] max-w-64">
-              <img src={binanceLogo} alt="Exchange" className="w-8 h-8" />
-              <div className="h-[32px] w-[2px] bg-[#43433b] mx-2"></div>
-              <div className="flex-1 text-center">
-                <p className="text-xs text-[#85827d] font-medium">Profit per hour</p>
-                <div className="flex items-center justify-center space-x-1">
-                  <img src={dollarCoin} alt="Dollar Coin" className="w-[18px] h-[18px]" />
-                  <p className="text-sm">{formatProfitPerHour(profitPerHour)}</p>
-                  <Info size={20} className="text-[#43433b]" />
-                </div>
-              </div>
-              <div className="h-[32px] w-[2px] bg-[#43433b] mx-2"></div>
-              <Settings className="text-white" />
+            <div className="flex space-x-1 items-center">
+              <Info className="w-8 h-8" />
+              <Settings className="w-8 h-8" />
             </div>
           </div>
+          <div className="pt-2">
+            <p className="text-sm text-gray-400">
+              <span className="text-green-500">{formatProfitPerHour(profitPerHour)}</span> coins per hour
+            </p>
+          </div>
         </div>
-
-        <div className="flex-grow mt-4 bg-[#f3ba2f] rounded-t-[48px] relative top-glow z-0">
+        <div className="bg-[#1d2025] rounded-t-[48px] relative top-glow z-0">
           <div className="absolute top-[2px] left-0 right-0 bottom-0 bg-[#1d2025] rounded-t-[46px]">
             <div className="px-4 mt-6 flex justify-between gap-2">
               <div className="bg-[#272a2f] rounded-lg px-4 py-2 w-full relative">
@@ -198,19 +202,27 @@ const App: React.FC = () => {
 
             <div className="px-4 mt-4 flex justify-center">
               <div className="px-4 py-2 flex items-center space-x-2">
-                <img src={dollarCoin} alt="Dollar Coin" className="w-10 h-10" />
+                <img src={tonlingoCoin} alt="TonLingo Coin" className="w-10 h-10" />
                 <p className="text-4xl text-white">{points.toLocaleString()}</p>
               </div>
             </div>
 
             <div className="px-4 mt-4 flex justify-center">
-              <div
-                className="w-80 h-80 p-4 rounded-full circle-outer"
-                onClick={handleCardClick}
-              >
-                <div className="w-full h-full rounded-full circle-inner">
-                  <img src={mainCharacter} alt="Main Character" className="w-full h-full" />
+              {/* New Question and Options Box */}
+              <div className="bg-[#272a2f] rounded-lg p-4 w-full max-w-sm">
+                <p className="text-white text-center font-bold mb-4">{questions[currentQuestionIndex].question}</p>
+                <div className="space-y-2">
+                  {questions[currentQuestionIndex].options.map((option) => (
+                    <button
+                      key={option}
+                      className={`w-full py-2 ${selectedAnswer === option ? "bg-[#1c1f24]" : "bg-[#272a2f]"} text-white rounded-lg`}
+                      onClick={() => handleAnswerClick(option)}
+                    >
+                      {option}
+                    </button>
+                  ))}
                 </div>
+                {message && <p className="text-white text-center mt-4">{message}</p>}
               </div>
             </div>
           </div>
